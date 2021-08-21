@@ -3,14 +3,11 @@ package com.example.retrofitexample1;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -20,23 +17,20 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-    ImageView profileImageView;
-    TextView nameTetView;
-    TextView emailTetView;;
 
+    GithubUser user;
+    List<GithubRepository> repository;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        profileImageView=findViewById(R.id.profileImageView);
-        nameTetView=findViewById(R.id.nameTextView);
-        emailTetView=findViewById(R.id.emailTetView);
+
 
         RecyclerView  repositoryList=findViewById(R.id.repositoryList);
 
 
-        RepositoryAdapter  repositoryadapter=new RepositoryAdapter();
-        repositoryList.setAdapter(repositoryadapter);
+        UserAndRepositoryAdapter userAndRepositoryAdapter=new UserAndRepositoryAdapter();
+        repositoryList.setAdapter(userAndRepositoryAdapter);
 
         Retrofit retrofit=new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
@@ -50,11 +44,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<GithubUser> call, Response<GithubUser> response) {
                 GithubUser user = response.body();
-                nameTetView.setText(user.name);
-                emailTetView.setText(user.login);
-                profileImageView.setImageURI(Uri.parse(user.avatar_url));
-                String imageUrl = user.avatar_url;
-                Glide.with(MainActivity.this).load(imageUrl).into(profileImageView);
+                MainActivity.this.user=user;
+                if(MainActivity.this.repository!=null){
+                    List<Object> itemList=new ArrayList<>();
+                    itemList.add(user);
+                    itemList.addAll(repository);
+                    userAndRepositoryAdapter.submitList(
+                            itemList
+                    );
+
+
+                }
+                //nameTetView.setText(user.name);
+                //emailTetView.setText(user.login);
+                //profileImageView.setImageURI(Uri.parse(user.avatar_url));
+               // String imageUrl = user.avatar_url;
+               // Glide.with(MainActivity.this).load(imageUrl).into(profileImageView);
 
 
 
@@ -73,7 +78,17 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<GithubRepository>> call, Response<List<GithubRepository>> response) {
                 if(response.isSuccessful()){
                     List<GithubRepository>repo=response.body();
-                    repositoryadapter.submitList(repo);
+                    MainActivity.this.repository=repo;
+                    if(MainActivity.this.user!=null){
+                        List<Object> itemList=new ArrayList<>();
+                        itemList.add(user);
+                        itemList.addAll(repository);
+                        userAndRepositoryAdapter.submitList(
+                                itemList
+                        );
+
+                    }
+                    //repositoryadapter.submitList(repo);
 
 
 
