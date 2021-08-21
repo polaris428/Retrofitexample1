@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,14 +27,17 @@ public class MainActivity extends AppCompatActivity {
     UserAndRepositoryAdapter userAndRepositoryAdapter=new UserAndRepositoryAdapter();
     GithubUser user;
     List<GithubRepository> repository;
+    ProgressBar progressBar;
+    RecyclerView  repositoryList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        RecyclerView  repositoryList=findViewById(R.id.repositoryList);
+        progressBar=findViewById(R.id.progressBar);
+        repositoryList=findViewById(R.id.repositoryList);
         repositoryList.setAdapter(userAndRepositoryAdapter);
+
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
@@ -68,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (i){
                         case 1:
+
+                            progressBar.setVisibility(View.GONE);
+                            repositoryList.setVisibility(View.VISIBLE);
                             GithubApicCll("inseong04",2);
                             MainActivity.this.user=null;
                             MainActivity.this.repository=null;
@@ -117,6 +125,9 @@ public class MainActivity extends AppCompatActivity {
                         userAndRepositoryAdapter.submitList(itemList);
                         switch (i) {
                             case 1:
+
+                                progressBar.setVisibility(View.GONE);
+                                repositoryList.setVisibility(View.VISIBLE);
                                 GithubApicCll("inseong04", 2);
                                 MainActivity.this.user = null;
                                 MainActivity.this.repository = null;
