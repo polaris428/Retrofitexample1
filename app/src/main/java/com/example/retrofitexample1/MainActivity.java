@@ -36,10 +36,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        userAndRepositoryAdapter = new UserAndRepositoryAdapter();
         progressBar = findViewById(R.id.progressBar);
         repositoryList = findViewById(R.id.repositoryList);
         repositoryList.setAdapter(userAndRepositoryAdapter);
-        userAndRepositoryAdapter = new UserAndRepositoryAdapter();
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -88,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     switch (i) {
                         case 1:
 
-                            progressBar.setVisibility(View.GONE);
-                            repositoryList.setVisibility(View.VISIBLE);
+
                             GithubApicCll("inseong04", 2);
                             MainActivity.this.user = null;
                             MainActivity.this.repository = null;
@@ -103,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
                             GithubApicCll("samgashyeong", 4);
                             MainActivity.this.user = null;
                             MainActivity.this.repository = null;
+                            progressBar.setVisibility(View.GONE);
+                            repositoryList.setVisibility(View.VISIBLE);
                             break;
                         default:
                             break;
