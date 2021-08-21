@@ -48,7 +48,7 @@ public  class UserAndRepositoryDiffUtil extends DiffUtil.ItemCallback<Object>{
                 GithubRepository oldRepo = (GithubRepository) oldItem;
                 GithubRepository newRepo = (GithubRepository) newItem;
                 return(oldRepo.htmlUrl.equals(newRepo.htmlUrl))
-                        &&oldRepo.description.equals(newRepo.description)
+
                         &&oldRepo.name.equals(newRepo.name);
 
 
