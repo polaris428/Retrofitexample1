@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
                 Request newRequest = chain.request().newBuilder()
-                        .addHeader("Authorization", "Bearer " + "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")
+                        .addHeader("Authorization", "Bearer " + "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")
                         .build();
                 return chain.proceed(newRequest);
             }
