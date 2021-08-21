@@ -10,6 +10,7 @@ public interface GitHubService {
     @GET("users/{user}")
     Call<GithubUser> getUser(@Path("user")String user);
 
-
+    @GET("users/{user}/repos")
+    Call<List<GithubRepository>> getUserRepos(@Path("user")String user);
 
 }

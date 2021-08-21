@@ -1,9 +1,11 @@
 package com.example.retrofitexample1;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,7 +22,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     ImageView profileImageView;
     TextView nameTetView;
-    TextView emailTetView;
+    TextView emailTetView;;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +31,12 @@ public class MainActivity extends AppCompatActivity {
         profileImageView=findViewById(R.id.profileImageView);
         nameTetView=findViewById(R.id.nameTextView);
         emailTetView=findViewById(R.id.emailTetView);
+
+        RecyclerView  repositoryList=findViewById(R.id.repositoryList);
+
+
+        RepositoryAdapter  repositoryadapter=new RepositoryAdapter();
+        repositoryList.setAdapter(repositoryadapter);
 
         Retrofit retrofit=new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
@@ -57,5 +66,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        Call<List<GithubRepository>> userRepositoryCall= service.getUserRepos("polaris428");
+        userRepositoryCall.enqueue(new Callback<List<GithubRepository>>() {
+            @Override
+            public void onResponse(Call<List<GithubRepository>> call, Response<List<GithubRepository>> response) {
+                if(response.isSuccessful()){
+                    List<GithubRepository>repo=response.body();
+                    repositoryadapter.submitList(repo);
+
+
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<GithubRepository>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 }
