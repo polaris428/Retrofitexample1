@@ -24,25 +24,27 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     Retrofit retrofit;
-    List<Object> itemList=new ArrayList<>();
-    UserAndRepositoryAdapter userAndRepositoryAdapter=new UserAndRepositoryAdapter();
+    List<Object> itemList = new ArrayList<>();
+    UserAndRepositoryAdapter userAndRepositoryAdapter;
     GithubUser user;
     List<GithubRepository> repository;
     ProgressBar progressBar;
-    RecyclerView  repositoryList;
+    RecyclerView repositoryList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SwipeRefreshLayout swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout);
-        progressBar=findViewById(R.id.progressBar);
-        repositoryList=findViewById(R.id.repositoryList);
+        SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        progressBar = findViewById(R.id.progressBar);
+        repositoryList = findViewById(R.id.repositoryList);
         repositoryList.setAdapter(userAndRepositoryAdapter);
+        userAndRepositoryAdapter = new UserAndRepositoryAdapter();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
-                GithubApicCll("polaris428",1);
+                GithubApicCll("polaris428", 1);
                 progressBar.setVisibility(View.VISIBLE);
                 repositoryList.setVisibility(View.GONE);
 
@@ -53,68 +55,59 @@ public class MainActivity extends AppCompatActivity {
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
-                Request newRequest  = chain.request().newBuilder()
+                Request newRequest = chain.request().newBuilder()
                         .addHeader("Authorization", "Bearer " + "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")
                         .build();
                 return chain.proceed(newRequest);
             }
         }).build();
-        retrofit=new Retrofit.Builder()
+        retrofit = new Retrofit.Builder()
                 .client(client)
                 .baseUrl("https://api.github.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        GithubApicCll("polaris428",1);
+        GithubApicCll("polaris428", 1);
 
     }
-    public  void GithubApicCll(String name ,int i){
-        GitHubService service=retrofit.create(GitHubService.class);
+
+    public void GithubApicCll(String name, int i) {
+        GitHubService service = retrofit.create(GitHubService.class);
         Call<GithubUser> userCall = service.getUser(name);
         userCall.enqueue(new Callback<GithubUser>() {
             @Override
             public void onResponse(Call<GithubUser> call, Response<GithubUser> response) {
                 GithubUser user = response.body();
-                MainActivity.this.user=user;
-                if(MainActivity.this.repository!=null){
+                MainActivity.this.user = user;
+                if (MainActivity.this.repository != null) {
 
                     itemList.add(user);
                     itemList.addAll(repository);
                     userAndRepositoryAdapter.submitList(itemList);
-                    Log.d("asdf","성공");
 
-                    switch (i){
+                    switch (i) {
                         case 1:
 
                             progressBar.setVisibility(View.GONE);
                             repositoryList.setVisibility(View.VISIBLE);
-                            GithubApicCll("inseong04",2);
-                            MainActivity.this.user=null;
-                            MainActivity.this.repository=null;
+                            GithubApicCll("inseong04", 2);
+                            MainActivity.this.user = null;
+                            MainActivity.this.repository = null;
                             break;
                         case 2:
-                            GithubApicCll("04pys",3);
-                            MainActivity.this.user=null;
-                            MainActivity.this.repository=null;
+                            GithubApicCll("04pys", 3);
+                            MainActivity.this.user = null;
+                            MainActivity.this.repository = null;
                             break;
                         case 3:
-                            GithubApicCll("samgashyeong",4);
-                            MainActivity.this.user=null;
-                            MainActivity.this.repository=null;
+                            GithubApicCll("samgashyeong", 4);
+                            MainActivity.this.user = null;
+                            MainActivity.this.repository = null;
                             break;
                         default:
                             break;
-
-
-
-
                     }
-
-
-
-
                 }
-
             }
 
             @Override
@@ -123,21 +116,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        Call<List<GithubRepository>> userRepositoryCall= service.getUserRepos(name);
+        Call<List<GithubRepository>> userRepositoryCall = service.getUserRepos(name);
         userRepositoryCall.enqueue(new Callback<List<GithubRepository>>() {
             @Override
             public void onResponse(Call<List<GithubRepository>> call, Response<List<GithubRepository>> response) {
-                if(response.isSuccessful()){
-                    List<GithubRepository>repo=response.body();
-                    MainActivity.this.repository=repo;
-                    if(MainActivity.this.user!=null){
+                if (response.isSuccessful()) {
+                    List<GithubRepository> repo = response.body();
+                    MainActivity.this.repository = repo;
+                    if (MainActivity.this.user != null) {
                         itemList.add(user);
                         itemList.addAll(repository);
                         userAndRepositoryAdapter.submitList(itemList);
                         switch (i) {
                             case 1:
-
                                 progressBar.setVisibility(View.GONE);
                                 repositoryList.setVisibility(View.VISIBLE);
                                 GithubApicCll("inseong04", 2);
@@ -158,12 +149,9 @@ public class MainActivity extends AppCompatActivity {
                                 break;
 
 
-
                         }
 
                     }
-
-
 
 
                 }
@@ -172,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<GithubRepository>> call, Throwable t) {
                 t.printStackTrace();
-                Log.d("asdf",t+"");
+
             }
         });
     }
