@@ -2,6 +2,7 @@ package com.example.retrofitexample1;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -33,11 +34,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        SwipeRefreshLayout swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout);
         progressBar=findViewById(R.id.progressBar);
         repositoryList=findViewById(R.id.repositoryList);
         repositoryList.setAdapter(userAndRepositoryAdapter);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
 
+                GithubApicCll("polaris428",1);
+                progressBar.setVisibility(View.VISIBLE);
+                repositoryList.setVisibility(View.GONE);
+
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
